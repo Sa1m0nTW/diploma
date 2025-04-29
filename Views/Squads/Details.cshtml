@@ -1,0 +1,135 @@
+﻿@model WorkWise.Models.Squads
+
+@{
+    ViewData["Title"] = "Команда " + Model.Name;
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <h2>@Model.Name</h2>
+            <p class="lead">Лидер: @Model.Leader.UserName</p>
+        </div>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5>Участники команды</h5>
+            <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#inviteModal">
+                <i class="bi bi-plus-lg"></i> Пригласить
+            </button>
+        </div>
+        <div class="card-body">
+            <div class="list-group">
+                @foreach (var member in Model.UserSquads)
+                {
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">@member.User.UserName</h6>
+                            <small class="text-muted">@member.Role</small>
+                        </div>
+                        @if (User.Identity.Name == Model.Leader.UserName && member.UserId != Model.LeaderID)
+                        {
+                            <button class="btn btn-sm btn-outline-danger remove-member" 
+                                    data-userid="@member.UserId" 
+                                    data-squadid="@Model.Id">
+                                <i class="bi bi-trash"></i> Удалить
+                            </button>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно приглашения -->
+<div class="modal fade" id="inviteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Пригласить участника</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="inviteForm">
+                    <input type="hidden" name="squadId" value="@Model.Id" />
+                    <div class="mb-3">
+                        <label class="form-label">Имя пользователя</label>
+                        <input type="text" name="invitedUserName" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Роль в команде</label>
+                        <input type="text" name="role" class="form-control" placeholder="Разработчик, Дизайнер и т.д.">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-primary" id="sendInviteBtn">Отправить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .list-group-item {
+            transition: all 0.3s ease;
+        }
+        .remove-member {
+            transition: opacity 0.3s;
+        }
+        .remove-member:hover {
+            opacity: 0.8;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        // Отправка приглашения
+        document.getElementById('sendInviteBtn').addEventListener('click', async function() {
+            const formData = new FormData(document.getElementById('inviteForm'));
+            const data = Object.fromEntries(formData.entries());
+            
+            const response = await fetch('/Invitations/Create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            if (result.success) {
+                location.reload(); // Обновляем страницу
+            } else {
+                alert(result.message);
+            }
+        });
+
+        // Удаление участника
+        document.querySelectorAll('.remove-member').forEach(btn => {
+            btn.addEventListener('click', async function() {
+                if (!confirm('Вы уверены, что хотите удалить этого участника?')) return;
+                
+                const userId = this.dataset.userid;
+                const squadId = this.dataset.squadid;
+                
+                const response = await fetch(`/Squads/RemoveMember?squadId=${squadId}&userId=${userId}`, {
+                    method: 'POST',
+                    headers: {
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    }
+                });
+                
+                if (response.ok) {
+                    location.reload(); // Обновляем страницу
+                } else {
+                    alert('Ошибка при удалении участника');
+                }
+            });
+        });
+    </script>
+}

@@ -1,0 +1,27 @@
+﻿@model IEnumerable<Invitation>
+
+<h2>Мои приглашения</h2>
+
+@if (!Model.Any())
+{
+    <p>У вас нет новых приглашений</p>
+}
+else
+{
+    <table class="table">
+        @foreach (var invite in Model)
+        {
+            <tr>
+                <td>Команда: @invite.Squad.Name</td>
+                <td>От: @invite.InviterUser.UserName</td>
+                <td>
+                    <form method="post" asp-action="Respond">
+                        <input type="hidden" name="invitationId" value="@invite.Id" />
+                        <button type="submit" name="accept" value="true" class="btn btn-sm btn-success">Принять</button>
+                        <button type="submit" name="accept" value="false" class="btn btn-sm btn-danger">Отклонить</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </table>
+}

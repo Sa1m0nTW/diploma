@@ -1,0 +1,35 @@
+﻿@model IEnumerable<WorkWise.ViewModels.SquadViewModel>
+
+@{
+    ViewData["Title"] = "Мои команды";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Название</th>
+            <th>Лидер</th>
+            <th>Ваша роль</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.LeaderName</td>
+                <td>
+                    <span class="badge @(item.IsCurrentUserLeader ? "bg-primary" : "bg-secondary")">
+                        @item.UserRole
+                    </span>
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Подробнее</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
