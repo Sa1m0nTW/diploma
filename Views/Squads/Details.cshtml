@@ -1,4 +1,11 @@
 ﻿@model WorkWise.Models.Squads
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
+@functions {
+    public string GetAntiXsrfRequestToken()
+    {
+        return Xsrf.GetAndStoreTokens(Context).RequestToken;
+    }
+}
 
 @{
     ViewData["Title"] = "Команда " + Model.Name;
@@ -15,23 +22,39 @@
     <div class="card mt-4">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5>Участники команды</h5>
+            @if (User.Identity.Name == Model.Leader.UserName)
+            {
             <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#inviteModal">
                 <i class="bi bi-plus-lg"></i> Пригласить
             </button>
+            }
         </div>
         <div class="card-body">
             <div class="list-group">
                 @foreach (var member in Model.UserSquads)
                 {
                     <div class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="mb-1">@member.User.UserName</h6>
-                            <small class="text-muted">@member.Role</small>
+                        <div class="d-flex align-items-center">
+                            <a asp-controller="Profiles" asp-action="Index" asp-route-id="@member.User.Id"
+                               class="text-decoration-none text-dark">
+                                @if (!string.IsNullOrEmpty(member.User.ProfilePictureUrl))
+                                {
+                                    <img src="@member.User.ProfilePictureUrl"
+                                         class="rounded-circle me-3"
+                                         width="40" height="40"
+                                         alt="@member.User.UserName">
+                                }
+                                <div>
+                                    <h6 class="mb-1">@member.User.UserName</h6>
+                                    <small class="text-muted">@member.Role</small>
+                                </div>
+                            </a>
                         </div>
+
                         @if (User.Identity.Name == Model.Leader.UserName && member.UserId != Model.LeaderID)
                         {
-                            <button class="btn btn-sm btn-outline-danger remove-member" 
-                                    data-userid="@member.UserId" 
+                            <button class="btn btn-sm btn-outline-danger remove-member"
+                                    data-userid="@member.UserId"
                                     data-squadid="@Model.Id">
                                 <i class="bi bi-trash"></i> Удалить
                             </button>
@@ -39,6 +62,94 @@
                     </div>
                 }
             </div>
+        </div>
+    </div>
+    @if (User.Identity.Name == Model.Leader.UserName)
+    {
+        <div class="card mt-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5>Задачи команды</h5>
+                <a asp-action="CreateGoal" asp-route-squadId="@Model.Id" class="btn btn-sm btn-success">
+                    <i class="bi bi-plus-lg"></i> Новая задача
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5>Задачи команды</h5>
+            </div>
+        </div>
+    }
+        <div class="card-body">
+            @if (Model.Goals != null && Model.Goals.Any())
+            {
+            <div class="list-group">
+                @foreach (var goal in Model.Goals.OrderByDescending(g => g.Importancy))
+                {
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="mb-1">
+                                    @goal.Name
+                                    <span class="badge bg-@(goal.State ? "success" : "warning") ms-2">
+                                        @(goal.State ? "Выполнено" : "В работе")
+                                    </span>
+                                </h6>
+                                <small class="text-muted">@goal.Desc</small>
+                                <div class="mt-2">
+                                    <span class="badge bg-info">Важность: @goal.Importancy</span>
+                                    <span class="badge bg-secondary ms-2">Срок: @goal.FinishTime.ToLocalTime().ToString("g")</span>
+                                    @if (goal.Performer != null)
+                                    {
+                                        <span class="badge bg-primary ms-2">Исполнитель: @goal.Performer.UserName</span>
+                                    }
+                                </div>
+                            </div>
+                            <div>
+                                <a asp-action="TaskDetails" asp-route-id="@goal.Id"
+                                   class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye"></i> Подробнее
+                                </a>
+                                @if (User.Identity.Name == goal.Performer?.UserName && !goal.State)
+                                {
+                                    <a asp-action="AddFeedback" asp-route-goalId="@goal.Id"
+                                       class="btn btn-sm btn-info ms-1">
+                                        <i class="bi bi-chat-left-text"></i> Отзыв
+                                    </a>
+                                }
+                                @if (goal.PerformerID == null)
+                                {
+                                    <span class="badge bg-info">Доступна для взятия</span>
+                                }
+                            </div>
+                            @if (User.Identity.Name == Model.Leader.UserName)
+                            {
+                                <div>
+                                    <a asp-action="EditGoal" asp-route-id="@goal.Id"
+                                       class="btn btn-sm btn-outline-primary me-2">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form asp-action="DeleteGoal" method="post" class="d-inline">
+                                        <input type="hidden" name="id" value="@goal.Id" />
+                                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                onclick="return confirm('Удалить эту задачу?')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+            }
+            else
+            {
+                <div class="alert alert-info">Нет задач для отображения</div>
+            }
         </div>
     </div>
 </div>
@@ -109,25 +220,51 @@
             }
         });
 
-        // Удаление участника
         document.querySelectorAll('.remove-member').forEach(btn => {
-            btn.addEventListener('click', async function() {
+            btn.addEventListener('click', async function () {
                 if (!confirm('Вы уверены, что хотите удалить этого участника?')) return;
-                
+
                 const userId = this.dataset.userid;
                 const squadId = this.dataset.squadid;
-                
-                const response = await fetch(`/Squads/RemoveMember?squadId=${squadId}&userId=${userId}`, {
-                    method: 'POST',
-                    headers: {
-                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+
+                try {
+                    const response = await fetch(`/Squads/RemoveMember`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': '@GetAntiXsrfRequestToken()'
+                        },
+                        body: JSON.stringify({
+                            squadId: squadId,
+                            userId: userId
+                        })
+                    });
+
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        const error = await response.text();
+                        console.error('Ошибка удаления:', error);
+                        alert('Ошибка при удалении участника: ' + error);
                     }
-                });
-                
-                if (response.ok) {
-                    location.reload(); // Обновляем страницу
-                } else {
-                    alert('Ошибка при удалении участника');
+                } catch (error) {
+                    console.error('Ошибка:', error);
+                    alert('Произошла ошибка: ' + error.message);
+                }
+            });
+        });
+
+        // Функция для получения CSRF-токена
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+
+        document.querySelectorAll('.delete-goal-form').forEach(form => {
+            form.addEventListener('submit', function (e) {
+                if (!confirm('Вы уверены, что хотите удалить эту задачу?')) {
+                    e.preventDefault();
                 }
             });
         });

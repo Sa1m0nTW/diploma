@@ -10,5 +10,7 @@
 
         public string AuthorId { get; set; } 
         public Users Author { get; set; }
+
+        public bool IsLeaderComment { get; set; } = false;
     }
 }

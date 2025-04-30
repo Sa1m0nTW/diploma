@@ -36,12 +36,16 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Saimon/source/repos/WorkWise/Views/Home/Privacy.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
-build_metadata.AdditionalFiles.CssScope = 
-
 [C:/Users/Saimon/source/repos/WorkWise/Views/Invitations/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW52aXRhdGlvbnNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Saimon/source/repos/WorkWise/Views/Profiles/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZmlsZXNcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Saimon/source/repos/WorkWise/Views/Profiles/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZmlsZXNcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Saimon/source/repos/WorkWise/Views/Shared/Error.cshtml]
@@ -60,16 +64,36 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Saimon/source/repos/WorkWise/Views/Squads/AddFeedback.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3F1YWRzXEFkZEZlZWRiYWNrLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Saimon/source/repos/WorkWise/Views/Squads/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3F1YWRzXENyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Saimon/source/repos/WorkWise/Views/Squads/CreateGoal.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3F1YWRzXENyZWF0ZUdvYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Saimon/source/repos/WorkWise/Views/Squads/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3F1YWRzXERldGFpbHMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Saimon/source/repos/WorkWise/Views/Squads/EditGoal.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3F1YWRzXEVkaXRHb2FsLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Saimon/source/repos/WorkWise/Views/Squads/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3F1YWRzXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Saimon/source/repos/WorkWise/Views/Squads/MyTasks.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3F1YWRzXE15VGFza3MuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Saimon/source/repos/WorkWise/Views/Squads/TaskDetails.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3F1YWRzXFRhc2tEZXRhaWxzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Saimon/source/repos/WorkWise/Views/_ViewImports.cshtml]

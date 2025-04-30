@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "S/yPN6L42z1/xa88ddhRDhfEuY/LX4kSAQw3m1u+kJQ=",
+  "Hash": "VpyjGtPQ6DSIM2LrBCPd8RPNavicgv358WpGX/nyfIk=",
   "Source": "WorkWise",
   "BasePath": "_content/WorkWise",
   "Mode": "Default",
@@ -1103,6 +1103,57 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\lib\\jquery-validation-unobtrusive\\LICENSE.txt"
+    },
+    {
+      "Identity": "C:\\Users\\Saimon\\source\\repos\\WorkWise\\wwwroot\\uploads\\avatars\\1d314309-1a25-441e-8249-69bff7160dbc.jpg",
+      "SourceId": "WorkWise",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Saimon\\source\\repos\\WorkWise\\wwwroot\\",
+      "BasePath": "_content/WorkWise",
+      "RelativePath": "uploads/avatars/1d314309-1a25-441e-8249-69bff7160dbc.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\uploads\\avatars\\1d314309-1a25-441e-8249-69bff7160dbc.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\Saimon\\source\\repos\\WorkWise\\wwwroot\\uploads\\avatars\\be668c20-ba01-4ed0-bf20-17b5552ff189.jpg",
+      "SourceId": "WorkWise",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Saimon\\source\\repos\\WorkWise\\wwwroot\\",
+      "BasePath": "_content/WorkWise",
+      "RelativePath": "uploads/avatars/be668c20-ba01-4ed0-bf20-17b5552ff189.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\uploads\\avatars\\be668c20-ba01-4ed0-bf20-17b5552ff189.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\Saimon\\source\\repos\\WorkWise\\wwwroot\\uploads\\avatars\\d99b9469-cb54-4026-b930-49c76ea101da.jpg",
+      "SourceId": "WorkWise",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Saimon\\source\\repos\\WorkWise\\wwwroot\\",
+      "BasePath": "_content/WorkWise",
+      "RelativePath": "uploads/avatars/d99b9469-cb54-4026-b930-49c76ea101da.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\uploads\\avatars\\d99b9469-cb54-4026-b930-49c76ea101da.jpg"
     }
   ]
 }

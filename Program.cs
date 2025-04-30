@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WorkWise.Data;
@@ -22,6 +23,10 @@ builder.Services.AddIdentity<Users, IdentityRole>(options =>
 }).AddEntityFrameworkStores<AppDbContext>()
 .AddDefaultTokenProviders();
 
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 10 * 1024 * 1024;
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

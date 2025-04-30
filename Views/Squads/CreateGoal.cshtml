@@ -1,0 +1,64 @@
+﻿@model WorkWise.ViewModels.GoalCreateViewModel
+
+@{
+    ViewData["Title"] = "Создать задачу";
+}
+
+<div class="container mt-4">
+    <h2>Создать новую задачу</h2>
+
+    <form asp-action="CreateGoal" method="post">
+        <input type="hidden" asp-for="SquadId" />
+
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Desc" class="form-label"></label>
+            <textarea asp-for="Desc" class="form-control" rows="3"></textarea>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label asp-for="Importancy" class="form-label"></label>
+                <select asp-for="Importancy" class="form-select">
+                    <option value="1">1 - Низкая</option>
+                    <option value="2">2</option>
+                    <option value="3" selected>3 - Средняя</option>
+                    <option value="4">4</option>
+                    <option value="5">5 - Высокая</option>
+                </select>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label asp-for="FinishTime" class="form-label">Срок выполнения</label>
+                <input asp-for="FinishTime" type="datetime-local" class="form-control"
+                       value="@Model.FinishTime.ToString("yyyy-MM-ddTHH:mm")" />
+                <span asp-validation-for="FinishTime" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label asp-for="PerformerID" class="form-label"></label>
+                <select asp-for="PerformerID" class="form-select">
+                    <option value="">Не назначено</option>
+                    @foreach (var performer in Model.AvailablePerformers)
+                    {
+                        <option value="@performer.Value">@performer.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Создать задачу</button>
+        <a asp-action="Details" asp-route-id="@Model.SquadId" class="btn btn-secondary">Отмена</a>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

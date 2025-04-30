@@ -1,0 +1,86 @@
+﻿@model IEnumerable<WorkWise.Models.Goals>
+
+@{
+    ViewData["Title"] = "Мои задачи";
+}
+
+<div class="container mt-4">
+    <div class="btn-group mb-3" role="group">
+        <a asp-action="MyTasks" asp-route-filter="active"
+           class="btn btn-@(ViewBag.CurrentFilter == "active" ? "primary" : "outline-primary")">
+            Активные
+        </a>
+        <a asp-action="MyTasks" asp-route-filter="completed"
+           class="btn btn-@(ViewBag.CurrentFilter == "completed" ? "primary" : "outline-primary")">
+            Выполненные
+        </a>
+        <a asp-action="MyTasks" asp-route-filter="overdue"
+           class="btn btn-@(ViewBag.CurrentFilter == "overdue" ? "primary" : "outline-primary")">
+            Просроченные
+        </a>
+    </div>
+    <h2>Мои задачи</h2>
+
+    @if (Model.Any())
+    {
+        <div class="list-group mt-3">
+            @foreach (var task in Model)
+            {
+                <div class="list-group-item">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5 class="mb-1">
+                                @if (task.State)
+                                {
+                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                }
+                                else if (task.FinishTime < DateTime.UtcNow)
+                                {
+                                    <i class="bi bi-exclamation-triangle-fill text-danger"></i>
+                                }
+                                @task.Name
+                            </h5>
+                            <p class="mb-1">@task.Desc</p>
+                            <div class="d-flex flex-wrap gap-2 mt-2">
+                                <span class="badge bg-primary">Команда: @task.Squad.Name</span>
+                                <span class="badge bg-@(task.Importancy > 3 ? "danger" : "warning")">
+                                    Важность: @task.Importancy
+                                </span>
+                                <span class="badge bg-@(task.FinishTime < DateTime.Now ? "danger" : "info")">
+                                    Срок: @task.FinishTime.ToLocalTime().ToString("g")
+                                </span>
+                            </div>
+                        </div>
+                        <div>
+                            <a asp-action="Details" asp-controller="Squads"
+                               asp-route-id="@task.SquadId"
+                               class="btn btn-sm btn-outline-primary mb-1"
+                               title="Перейти к команде">
+                                <i class="bi bi-arrow-right-circle"></i>
+                            </a>
+                        </div>
+                    </div>
+                    @if (ViewBag.CurrentFilter != "completed" && !task.State && task.Performer == User.Identity)
+                    {
+                        <a asp-action="AddFeedback" asp-route-goalId="@task.Id"
+                           class="btn btn-sm btn-info" title="Добавить отзыв">
+                            <i class="bi bi-chat-left-text"></i> Добавить отзыв
+                        </a>
+                    }
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            @(ViewBag.CurrentFilter switch
+            {
+                "active" => "Нет активных задач",
+                "completed" => "Нет выполненных задач",
+                "overdue" => "Нет просроченных задач",
+                _ => "Нет назначенных задач"
+            })
+        </div>
+    }
+</div>

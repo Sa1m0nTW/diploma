@@ -1,0 +1,42 @@
+﻿@model WorkWise.ViewModels.GoalFeedbackViewModel
+
+@{
+    ViewData["Title"] = $"Добавить отзыв к задаче: {Model.GoalName}";
+}
+
+<div class="container mt-4">
+    <h2>@ViewData["Title"]</h2>
+
+    <form asp-action="AddFeedback" method="post">
+        <input type="hidden" asp-for="GoalId" />
+        <input type="hidden" asp-for="GoalName" />
+        <input type="hidden" asp-for="IsLeader" />
+
+        <div class="mb-3">
+            <label asp-for="Comment" class="form-label">
+                @(Model.IsLeader ? "Комментарий лидера" : "Ваш отзыв о выполнении")
+            </label>
+            <textarea asp-for="Comment" class="form-control" rows="5" placeholder="@(Model.IsLeader ? "Оставьте комментарий к задаче..." : "Опишите выполнение задачи...")"></textarea>
+            <span asp-validation-for="Comment" class="text-danger"></span>
+        </div>
+
+        @if (Model.IsLeader)
+        {
+            <div class="mb-3 form-check">
+                <input type="checkbox" asp-for="MarkAsCompleted" class="form-check-input" />
+                <label asp-for="MarkAsCompleted" class="form-check-label">
+                    Отметить задачу как выполненную
+                </label>
+            </div>
+        }
+        else
+        {
+            <input type="hidden" asp-for="MarkAsCompleted" value="false" />
+        }
+
+        <button type="submit" class="btn btn-primary">
+            @(Model.IsLeader ? "Добавить комментарий" : "Отправить отзыв")
+        </button>
+        <a asp-action="TaskDetails" asp-route-id="@Model.GoalId" class="btn btn-secondary">Отмена</a>
+    </form>
+</div>

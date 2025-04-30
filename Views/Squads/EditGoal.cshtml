@@ -1,0 +1,68 @@
+﻿@model WorkWise.ViewModels.GoalEditViewModel
+
+@{
+    ViewData["Title"] = "Редактирование задачи";
+}
+
+<div class="container mt-4">
+    <h2>Редактирование задачи</h2>
+
+    <form asp-action="EditGoal" method="post">
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="SquadId" />
+
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Desc" class="form-label"></label>
+            <textarea asp-for="Desc" class="form-control" rows="3"></textarea>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label asp-for="Importancy" class="form-label"></label>
+                <select asp-for="Importancy" class="form-select">
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        <option value="@i">@i</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label asp-for="FinishTime" class="form-label"></label>
+                <input asp-for="FinishTime" type="datetime-local" class="form-control"
+                       value="@Model.FinishTime.ToString("yyyy-MM-ddTHH:mm")" />
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label asp-for="PerformerID" class="form-label"></label>
+                <select asp-for="PerformerID" class="form-select">
+                    <option value="">Не назначено</option>
+                    @foreach (var user in Model.AvailablePerformers)
+                    {
+                        <option value="@user.Value">@user.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="mb-3 form-check">
+            <input type="checkbox" asp-for="IsCompleted" class="form-check-input" />
+            <label asp-for="IsCompleted" class="form-check-label"></label>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <a asp-action="Details" asp-route-id="@Model.SquadId" class="btn btn-secondary">Отмена</a>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

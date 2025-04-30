@@ -5,10 +5,23 @@
     @if(signInManager.IsSignedIn(User))
     {
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-controller="Account" asp-action="Logout">Выйти</a>
+            <a class="nav-link" asp-controller="Profiles" asp-action="Index">
+                <i class="bi bi-person"></i> Мой профиль
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-controller="Squads" asp-action="MyTasks">
+                <i class="bi bi-list-task"></i> Мои задачи
+            </a>
         </li>
         <li class="nav-item">
             <a class="nav-link text-dark" asp-controller="Squads" asp-action="Create">Создать команду</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-controller="Squads" asp-action="Index">Мои команды</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-controller="Account" asp-action="Logout">Выйти</a>
         </li>
     }
     else

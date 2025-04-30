@@ -1,0 +1,80 @@
+﻿@model WorkWise.ViewModels.ProfileViewModel
+
+<div class="container mt-4">
+    <h2>Редактирование профиля</h2>
+
+    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card mb-3">
+                    <div class="card-body text-center">
+                        @if (!string.IsNullOrEmpty(Model.ProfilePictureUrl))
+                        {
+                            <img id="profile-preview" src="@Model.ProfilePictureUrl"
+                                 class="rounded-circle mb-3"
+                                 width="200" height="200">
+                        }
+                        else
+                        {
+                            <div id="profile-preview"
+                                 class="bg-secondary rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                                 style="width: 200px; height: 200px;">
+                                <span class="text-white fs-1">@Model.FullName?[0]</span>
+                            </div>
+                        }
+
+                        <div class="form-group">
+                            <label asp-for="ProfilePicture" class="form-label">Новая фотография</label>
+                            <input asp-for="ProfilePicture" class="form-control"
+                                   type="file" accept="image/*"
+                                   onchange="document.getElementById('profile-preview').src = window.URL.createObjectURL(this.files[0])">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="FullName" class="form-label"></label>
+                            <input asp-for="FullName" class="form-control" />
+                            <span asp-validation-for="FullName" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Email" class="form-label"></label>
+                            <input asp-for="Email" class="form-control" readonly />
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="BirthDate" class="form-label"></label>
+                            <input asp-for="BirthDate" type="date" class="form-control"
+                                   value="@(Model.BirthDate?.ToString("yyyy-MM-dd"))" />
+                            <span asp-validation-for="BirthDate" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Bio" class="form-label"></label>
+                            <textarea asp-for="Bio" class="form-control" rows="5"></textarea>
+                            <span asp-validation-for="Bio" class="text-danger"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Сохранить</button>
+                        <a asp-action="Index" class="btn btn-secondary">Отмена</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
