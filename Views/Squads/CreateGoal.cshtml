@@ -8,22 +8,23 @@
     <h2>Создать новую задачу</h2>
 
     <form asp-action="CreateGoal" method="post">
+        <div asp-validation-summary="All" class="text-danger"></div>
         <input type="hidden" asp-for="SquadId" />
 
         <div class="mb-3">
-            <label asp-for="Name" class="form-label"></label>
+            <label asp-for="Name" class="form-label">Название задачи</label>
             <input asp-for="Name" class="form-control" />
             <span asp-validation-for="Name" class="text-danger"></span>
         </div>
 
         <div class="mb-3">
-            <label asp-for="Desc" class="form-label"></label>
+            <label asp-for="Desc" class="form-label">Описание задачи</label>
             <textarea asp-for="Desc" class="form-control" rows="3"></textarea>
         </div>
 
         <div class="row">
             <div class="col-md-4 mb-3">
-                <label asp-for="Importancy" class="form-label"></label>
+                <label asp-for="Importancy" class="form-label">Важность задачи</label>
                 <select asp-for="Importancy" class="form-select">
                     <option value="1">1 - Низкая</option>
                     <option value="2">2</option>
@@ -40,15 +41,22 @@
                 <span asp-validation-for="FinishTime" class="text-danger"></span>
             </div>
 
-            <div class="col-md-4 mb-3">
-                <label asp-for="PerformerID" class="form-label"></label>
-                <select asp-for="PerformerID" class="form-select">
-                    <option value="">Не назначено</option>
-                    @foreach (var performer in Model.AvailablePerformers)
+            <div class="mb-3">
+                <label class="form-label">Исполнители</label>
+                <div class="performer-list">
+                    @for (int i = 0; i < Model.AvailablePerformers.Count; i++)
                     {
-                        <option value="@performer.Value">@performer.Text</option>
+                        <div class="form-check">
+                            <input type="hidden" asp-for="@Model.AvailablePerformers[i].Id" />
+                            <input type="hidden" asp-for="@Model.AvailablePerformers[i].Name" />
+                            <input class="form-check-input" type="checkbox"
+                                   asp-for="@Model.AvailablePerformers[i].IsSelected" />
+                            <label class="form-check-label" asp-for="@Model.AvailablePerformers[i].IsSelected">
+                                @Model.AvailablePerformers[i].Name
+                            </label>
+                        </div>
                     }
-                </select>
+                </div>
             </div>
         </div>
 
@@ -61,4 +69,12 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+        $(document).ready(function () {
+            $('#SelectedPerformerIds').select2({
+                placeholder: "Выберите исполнителей",
+                allowClear: true
+            });
+        });
+    </script>
 }

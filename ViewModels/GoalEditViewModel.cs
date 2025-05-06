@@ -19,11 +19,12 @@ namespace WorkWise.ViewModels
         [DataType(DataType.DateTime)]
         public DateTime FinishTime { get; set; }
 
-        [Display(Name = "Исполнитель")]
-        public string? PerformerID { get; set; }
+        [Display(Name = "Исполнители")]
+        public List<string> SelectedPerformerIds { get; set; } = new List<string>();
 
         public Guid SquadId { get; set; }
-        public List<SelectListItem>? AvailablePerformers { get; set; }
         public bool IsCompleted { get; set; }
+        public List<PerformerViewModel> AvailablePerformers { get; set; } = new List<PerformerViewModel>();
+
     }
 }

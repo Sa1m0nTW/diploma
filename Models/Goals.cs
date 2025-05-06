@@ -10,8 +10,7 @@
         public bool State { get; set; }
         public DateTime FinishTime { get; set; }
         public DateTime CreatedAt { get; set; }
-        public Users? Performer { get; set; }
-        public string? PerformerID { get; set; }
+        public virtual ICollection<Users> Performers { get; set; } = new List<Users>();
         public Squads Squad { get; set; }
         public Guid SquadId { get; set; }
 

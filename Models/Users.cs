@@ -9,8 +9,7 @@ namespace WorkWise.Models
         public string? ProfilePictureUrl { get; set; }
         public DateTime? BirthDate { get; set; }
         public string? Bio { get; set; }
-
         public ICollection<UserSquad> UserSquads { get; set; }
-        public ICollection<Goals> Goals { get; set; }
+        public virtual ICollection<Goals> Goals { get; set; } = new List<Goals>();
     }
 }

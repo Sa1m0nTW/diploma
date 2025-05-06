@@ -12,28 +12,31 @@
     <div class="card">
         <div class="card-header">
             <h2>@Model.Name</h2>
+            <div class="alert alert-@(Model.State ? "success" : "warning")">
+                @if (Model.State)
+                {
+                    <span>Задача завершена</span>
+                    @if (Model.Feedbacks.Any(f => f.IsLeaderComment))
+                    {
+                        <span> (подтверждено лидером)</span>
+                    }
+                }
+                else
+                {
+                    <span>Задача в работе</span>
+                }
+            </div>
             <div class="d-flex flex-wrap gap-2 mt-2">
-                <div class="alert alert-@(Model.State ? "success" : "warning")">
-                    @if (Model.State)
-                    {
-                        <span>Задача завершена</span>
-                        @if (Model.Feedbacks.Any(f => f.IsLeaderComment))
-                        {
-                            <span> (подтверждено лидером)</span>
-                        }
-                    }
-                    else
-                    {
-                        <span>Задача в работе</span>
-                    }
-                </div>
                 <span class="badge bg-info">Важность: @Model.Importancy</span>
                 <span class="badge bg-@(Model.FinishTime < DateTime.UtcNow ? "danger" : "secondary")">
                     Срок: @Model.FinishTime.ToLocalTime().ToString("g")
                 </span>
-                @if (Model.Performer != null)
+                @if (Model.Performers.Any())
                 {
-                    <span class="badge bg-primary">Исполнитель: @Model.Performer.UserName</span>
+                    foreach (var performer in Model.Performers)
+                    {
+                        <span class="badge bg-primary ms-2">@performer.FullName</span>
+                    }
                 }
             </div>
         </div>
@@ -41,36 +44,37 @@
         <div class="card-body">
             <h5>Описание</h5>
             <p class="card-text">@Model.Desc</p>
-
-            <div class="mt-4">
-                <h5>Вложения</h5>
-                @if (Model.Attachments.Any())
-                {
-                    <div class="list-group">
-                        @foreach (var file in Model.Attachments)
-                        {
-                            <a href="@file.FileUrl" target="_blank" class="list-group-item list-group-item-action">
-                                <i class="bi bi-file-earmark"></i> @file.FileName
-                                <small class="text-muted">(@file.UploadedBy.UserName)</small>
-                            </a>
-                        }
-                    </div>
-                }
-                else
-                {
-                    <div class="alert alert-info">Нет вложений</div>
-                }
-            </div>
         </div>
         @if (Model.Squad?.Leader?.UserName == User.Identity?.Name && !Model.State)
         {
-            <div class="mt-4">
-            <form asp-action="CompleteGoal" method="post" class="mt-2">
-                <input type="hidden" name="id" value="@Model.Id" />
-                <button type="submit" class="btn btn-success">
-                    <i class="bi bi-check-circle"></i> Завершить задачу
-                </button>
-            </form>
+            <div class="card-footer">
+                <form asp-action="CompleteGoal" method="post" class="mt-2">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-check-circle"></i> Завершить задачу
+                    </button>
+                </form>
+            </div>
+        }
+        @{
+            var currentUserName = User.Identity?.Name;
+            var isLeader = Model.Squad?.Leader?.UserName == User.Identity?.Name;
+            var squadMembers = Model.Squad?.UserSquads?.Select(us => us.User) ?? Enumerable.Empty<Users>();
+            var isInSquad = Model.Squad?.UserSquads?.Any(us => us.User.UserName == User.Identity.Name) ?? false;
+            var isPerformer = Model.Performers?.Any(p => p.UserName == User.Identity.Name) ?? false;
+            
+            var canTakeTask = !isLeader && !isPerformer && isInSquad && (Model.State == false);
+        }
+
+        @if (canTakeTask)
+        {
+            <div class="card-footer">
+                <form asp-action="TakeTask" method="post" class="mt-3">
+                    <input type="hidden" name="goalId" value="@Model.Id" />
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-person-check"></i> Взять задачу себе
+                    </button>
+                </form>
             </div>
         }
     </div>
@@ -79,11 +83,16 @@
     <div class="card mt-4">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5>Отзывы</h5>
-
             @{
-                var isLeader = Model.Squad?.Leader?.UserName == User.Identity?.Name;
-                var isPerformer = Model.Performer?.UserName == User.Identity?.Name;
-                var canAddFeedback = (isPerformer || isLeader) && !Model.State;
+                var isPerformerr = false;
+                @foreach (var performer in Model.Performers)
+                {
+                    if (performer == User.Identity)
+                    {
+                        isPerformerr = true;
+                    }
+                }
+                var canAddFeedback = (Model.Performers.Any(p => p.UserName == User.Identity.Name) || isLeader) && !Model.State;
             }
 
             @if (canAddFeedback)
@@ -106,7 +115,7 @@
                             <div class="d-flex justify-content-between">
                                 <div>
                                     <strong>
-                                        @feedback.Author.UserName
+                                        @feedback.Author.FullName
                                         @if (feedback.IsLeaderComment)
                                         {
                                             <span class="badge bg-warning text-dark ms-2">Лидер</span>

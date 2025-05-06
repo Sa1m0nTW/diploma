@@ -14,6 +14,7 @@ else
             <tr>
                 <td>Команда: @invite.Squad.Name</td>
                 <td>От: @invite.InviterUser.UserName</td>
+                <td>Ваша роль: @invite.Role</td>
                 <td>
                     <form method="post" asp-action="Respond">
                         <input type="hidden" name="invitationId" value="@invite.Id" />

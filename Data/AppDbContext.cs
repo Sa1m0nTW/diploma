@@ -16,8 +16,10 @@ namespace WorkWise.Data
         public DbSet<GoalAttachments> GoalAttachments { get; set; }
         public DbSet<Invitation> Invitations { get; set; }
         public DbSet<UserSquad> UserSquads { get; set; }
+
+        public DbSet<SquadChatMes> SquadChatMes { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-            {
+        {
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<IdentityUserLogin<string>>().HasKey(x => new { x.LoginProvider, x.ProviderKey });
@@ -35,6 +37,15 @@ namespace WorkWise.Data
                 .HasOne(us => us.Squad)
                 .WithMany(t => t.UserSquads)
                 .HasForeignKey(us => us.SquadId);
-            }
+
+            modelBuilder.Entity<Goals>()
+                .HasMany(g => g.Performers)
+                .WithMany(u => u.Goals)
+                .UsingEntity<Dictionary<string, object>>(
+                    "GoalPerformers",
+                    j => j.HasOne<Users>().WithMany().HasForeignKey("UserId"),
+                    j => j.HasOne<Goals>().WithMany().HasForeignKey("GoalId"),
+                    j => j.HasKey("GoalId", "UserId"));
+        }
     }
-    }
+}

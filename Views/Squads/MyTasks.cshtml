@@ -52,20 +52,22 @@
                             </div>
                         </div>
                         <div>
-                            <a asp-action="Details" asp-controller="Squads"
-                               asp-route-id="@task.SquadId"
+                            <a asp-action="TaskDetails" asp-controller="Squads"
+                               asp-route-id="@task.Id"
                                class="btn btn-sm btn-outline-primary mb-1"
-                               title="Перейти к команде">
+                               title="Перейти к задаче">
                                 <i class="bi bi-arrow-right-circle"></i>
                             </a>
                         </div>
                     </div>
-                    @if (ViewBag.CurrentFilter != "completed" && !task.State && task.Performer == User.Identity)
+                    @if (ViewBag.CurrentFilter != "completed" && !task.State && task.Performers.Any(p => p.UserName == User.Identity.Name))
                     {
-                        <a asp-action="AddFeedback" asp-route-goalId="@task.Id"
-                           class="btn btn-sm btn-info" title="Добавить отзыв">
-                            <i class="bi bi-chat-left-text"></i> Добавить отзыв
-                        </a>
+                        <div class="mt-3 d-flex justify-content-end">
+                            <a asp-action="AddFeedback" asp-route-goalId="@task.Id"
+                               class="btn btn-sm btn-info" title="Добавить отзыв">
+                                <i class="bi bi-chat-left-text"></i> Добавить отзыв
+                            </a>
+                        </div>
                     }
                 </div>
             }

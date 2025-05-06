@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WorkWise.Data;
@@ -11,9 +12,11 @@ using WorkWise.Data;
 namespace WorkWise.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250505082720_performers")]
+    partial class performers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -310,35 +313,6 @@ namespace WorkWise.Migrations
                     b.ToTable("Invitations");
                 });
 
-            modelBuilder.Entity("WorkWise.Models.SquadChatMes", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("AuthorId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("SquadId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AuthorId");
-
-                    b.HasIndex("SquadId");
-
-                    b.ToTable("SquadChatMes");
-                });
-
             modelBuilder.Entity("WorkWise.Models.Squads", b =>
                 {
                     b.Property<Guid>("Id")
@@ -595,25 +569,6 @@ namespace WorkWise.Migrations
                     b.Navigation("InvitedUser");
 
                     b.Navigation("InviterUser");
-
-                    b.Navigation("Squad");
-                });
-
-            modelBuilder.Entity("WorkWise.Models.SquadChatMes", b =>
-                {
-                    b.HasOne("WorkWise.Models.Users", "Author")
-                        .WithMany()
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WorkWise.Models.Squads", "Squad")
-                        .WithMany()
-                        .HasForeignKey("SquadId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Author");
 
                     b.Navigation("Squad");
                 });

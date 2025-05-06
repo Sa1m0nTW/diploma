@@ -40,7 +40,8 @@ namespace WorkWise.Controllers
                     InvitedUserId = invitedUser.Id,
                     SquadId = dto.SquadId,
                     InviterUserId = currentUser.Id,
-                    Status = InvitationStatus.Pending
+                    Status = InvitationStatus.Pending,
+                    Role = dto.Role
                 };
 
                 _context.Invitations.Add(invitation);
@@ -57,6 +58,7 @@ namespace WorkWise.Controllers
         {
             public string InvitedUserName { get; set; }
             public Guid SquadId { get; set; }
+            public string Role { get; set; }
         }
 
         // Просмотр своих приглашений
@@ -89,7 +91,8 @@ namespace WorkWise.Controllers
                 {
                     UserId = invitation.InvitedUserId,
                     SquadId = invitation.SquadId,
-                    JoinedAt = DateTime.UtcNow
+                    JoinedAt = DateTime.UtcNow,
+                    Role = invitation.Role
                 });
             }
 

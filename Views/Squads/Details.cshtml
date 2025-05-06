@@ -12,143 +12,252 @@
 }
 
 <div class="container mt-4">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
     <div class="row">
         <div class="col-md-8">
             <h2>@Model.Name</h2>
-            <p class="lead">Лидер: @Model.Leader.UserName</p>
+            <p class="lead">
+                Лидер:@if (!string.IsNullOrEmpty(Model.Leader.ProfilePictureUrl))
+                {
+                    <img src="@Model.Leader.ProfilePictureUrl"
+                         class="rounded-circle me-3"
+                         width="40" height="40"
+                         alt="@Model.Leader.FullName">
+                }@Model.Leader.FullName
+            </p>
         </div>
     </div>
 
-    <div class="card mt-4">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h5>Участники команды</h5>
-            @if (User.Identity.Name == Model.Leader.UserName)
-            {
-            <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#inviteModal">
-                <i class="bi bi-plus-lg"></i> Пригласить
-            </button>
-            }
-        </div>
-        <div class="card-body">
-            <div class="list-group">
-                @foreach (var member in Model.UserSquads)
-                {
-                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center">
-                            <a asp-controller="Profiles" asp-action="Index" asp-route-id="@member.User.Id"
-                               class="text-decoration-none text-dark">
-                                @if (!string.IsNullOrEmpty(member.User.ProfilePictureUrl))
-                                {
-                                    <img src="@member.User.ProfilePictureUrl"
-                                         class="rounded-circle me-3"
-                                         width="40" height="40"
-                                         alt="@member.User.UserName">
-                                }
-                                <div>
-                                    <h6 class="mb-1">@member.User.UserName</h6>
-                                    <small class="text-muted">@member.Role</small>
-                                </div>
-                            </a>
-                        </div>
+    <!-- Новый ряд с участниками и чатом -->
+    <div class="row mt-3">
+        <!-- Блок участников (занимает 6 колонок на больших экранах) -->
+        <div class="col-lg-6 mb-3">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Участники команды</h5>
 
-                        @if (User.Identity.Name == Model.Leader.UserName && member.UserId != Model.LeaderID)
-                        {
-                            <button class="btn btn-sm btn-outline-danger remove-member"
-                                    data-userid="@member.UserId"
-                                    data-squadid="@Model.Id">
-                                <i class="bi bi-trash"></i> Удалить
+                    @if (User.Identity.Name == Model.Leader.UserName)
+                    {
+                        <div class="d-flex align-items-center gap-2">
+                            <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#inviteModal">
+                                <i class="bi bi-plus-lg"></i> Пригласить
                             </button>
-                        }
-                    </div>
-                }
-            </div>
-        </div>
-    </div>
-    @if (User.Identity.Name == Model.Leader.UserName)
-    {
-        <div class="card mt-4">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5>Задачи команды</h5>
-                <a asp-action="CreateGoal" asp-route-squadId="@Model.Id" class="btn btn-sm btn-success">
-                    <i class="bi bi-plus-lg"></i> Новая задача
-                </a>
-            </div>
-        </div>
-    }
-    else
-    {
-        <div class="card mt-4">
-            <div class="card-header">
-                <h5>Задачи команды</h5>
-            </div>
-        </div>
-    }
-        <div class="card-body">
-            @if (Model.Goals != null && Model.Goals.Any())
-            {
-            <div class="list-group">
-                @foreach (var goal in Model.Goals.OrderByDescending(g => g.Importancy))
-                {
-                    <div class="list-group-item">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <h6 class="mb-1">
-                                    @goal.Name
-                                    <span class="badge bg-@(goal.State ? "success" : "warning") ms-2">
-                                        @(goal.State ? "Выполнено" : "В работе")
-                                    </span>
-                                </h6>
-                                <small class="text-muted">@goal.Desc</small>
-                                <div class="mt-2">
-                                    <span class="badge bg-info">Важность: @goal.Importancy</span>
-                                    <span class="badge bg-secondary ms-2">Срок: @goal.FinishTime.ToLocalTime().ToString("g")</span>
-                                    @if (goal.Performer != null)
-                                    {
-                                        <span class="badge bg-primary ms-2">Исполнитель: @goal.Performer.UserName</span>
-                                    }
+                            <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#changeRoleModal">
+                                <i class="bi bi-people-fill"></i> Роли
+                            </button>
+                            <form asp-action="Delete" method="post" class="d-inline">
+                                <input type="hidden" name="id" value="@Model.Id" />
+                                <button type="submit" class="btn btn-danger btn-sm"
+                                        onclick="return confirm('Вы уверены, что хотите удалить команду? Это действие нельзя отменить!')">
+                                    <i class="bi bi-trash"></i> Удалить
+                                </button>
+                            </form>
+                        </div>
+                    }
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush" style="max-height: 350px; overflow-y: auto;">
+                        @foreach (var member in Model.UserSquads)
+                        {
+                            <div class="list-group-item d-flex justify-content-between align-items-center py-2">
+                                <div class="d-flex align-items-center">
+                                    <a asp-controller="Profiles" asp-action="Index" asp-route-id="@member.User.Id"
+                                       class="text-decoration-none text-dark">
+                                        @if (!string.IsNullOrEmpty(member.User.ProfilePictureUrl))
+                                        {
+                                            <img src="@member.User.ProfilePictureUrl"
+                                                 class="rounded-circle me-3"
+                                                 width="36" height="36"
+                                                 alt="@member.User.FullName">
+                                        }
+                                        <div>
+                                            <h6 class="mb-0" style="font-size: 0.95rem;">@member.User.FullName</h6>
+                                            <small class="text-muted" style="font-size: 0.8rem;">@member.Role</small>
+                                        </div>
+                                    </a>
                                 </div>
-                            </div>
-                            <div>
-                                <a asp-action="TaskDetails" asp-route-id="@goal.Id"
-                                   class="btn btn-sm btn-outline-primary">
-                                    <i class="bi bi-eye"></i> Подробнее
-                                </a>
-                                @if (User.Identity.Name == goal.Performer?.UserName && !goal.State)
+
+                                @if (User.Identity.Name == member.User.UserName && member.UserId != Model.LeaderID)
                                 {
-                                    <a asp-action="AddFeedback" asp-route-goalId="@goal.Id"
-                                       class="btn btn-sm btn-info ms-1">
-                                        <i class="bi bi-chat-left-text"></i> Отзыв
-                                    </a>
-                                }
-                                @if (goal.PerformerID == null)
-                                {
-                                    <span class="badge bg-info">Доступна для взятия</span>
-                                }
-                            </div>
-                            @if (User.Identity.Name == Model.Leader.UserName)
-                            {
-                                <div>
-                                    <a asp-action="EditGoal" asp-route-id="@goal.Id"
-                                       class="btn btn-sm btn-outline-primary me-2">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <form asp-action="DeleteGoal" method="post" class="d-inline">
-                                        <input type="hidden" name="id" value="@goal.Id" />
-                                        <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                onclick="return confirm('Удалить эту задачу?')">
-                                            <i class="bi bi-trash"></i>
+                                    <form asp-action="LeaveTeam" method="post">
+                                        <input type="hidden" name="squadId" value="@Model.Id" />
+                                        <button type="submit" class="btn btn-outline-warning btn-sm"
+                                                onclick="return confirm('Вы уверены, что хотите покинуть команду?')">
+                                            <i class="bi bi-box-arrow-right"></i> Покинуть
                                         </button>
                                     </form>
-                                </div>
-                            }
-                        </div>
+                                }
+                                else if (User.Identity.Name == Model.Leader.UserName && member.UserId != Model.LeaderID)
+                                {
+                                    <button class="btn btn-sm btn-outline-danger remove-member"
+                                            data-userid="@member.UserId"
+                                            data-squadid="@Model.Id">
+                                        <i class="bi bi-trash"></i> Удалить
+                                    </button>
+                                }
+                            </div>
+                        }
                     </div>
-                }
+                </div>
             </div>
+        </div>
+
+        <!-- Блок чата (занимает 6 колонок на больших экранах) -->
+        <div class="col-lg-6 mb-3">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">Чат команды</h5>
+                </div>
+                <div class="card-body p-0 d-flex flex-column">
+                    <div id="chatMessages" style="height: 280px; overflow-y: auto; padding: 10px; flex-grow: 1;">
+                        <!-- Сообщения будут здесь -->
+                    </div>
+                    <div class="input-group p-2">
+                        <input type="text" id="chatMessageInput" class="form-control form-control-sm" placeholder="Введите сообщение...">
+                        <button class="btn btn-primary btn-sm" id="sendMessageBtn">Отправить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Блок задач (полная ширина под участниками и чатом) -->
+    <div class="row mt-3">
+        <div class="col-12">
+            @if (User.Identity.Name == Model.Leader.UserName)
+            {
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Задачи команды</h5>
+                        <a asp-action="CreateGoal" asp-route-squadId="@Model.Id" class="btn btn-sm btn-success">
+                            <i class="bi bi-plus-lg"></i> Новая задача
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        @if (Model.Goals != null && Model.Goals.Any())
+                        {
+                            <div class="list-group">
+                                @foreach (var goal in Model.Goals.OrderByDescending(g => g.Importancy))
+                                {
+                                    <div class="list-group-item py-2">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h6 class="mb-1" style="font-size: 0.95rem;">
+                                                    @goal.Name
+                                                    <span class="badge bg-@(goal.State ? "success" : "warning") ms-2">
+                                                        @(goal.State ? "Выполнено" : "В работе")
+                                                    </span>
+                                                </h6>
+                                                <small class="text-muted" style="font-size: 0.85rem;">@goal.Desc</small>
+                                                <div class="mt-2">
+                                                    <span class="badge bg-info">Важность: @goal.Importancy</span>
+                                                    <span class="badge bg-secondary ms-2">Срок: @goal.FinishTime.ToLocalTime().ToString("g")</span>
+                                                    @foreach (var performer in goal.Performers)
+                                                    {
+                                                        <span class="badge bg-primary">@performer.FullName</span>
+                                                    }
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <a asp-action="TaskDetails" asp-route-id="@goal.Id"
+                                                   class="btn btn-sm btn-outline-primary">
+                                                    <i class="bi bi-eye"></i> Подробнее
+                                                </a>
+                                                @if (goal.Performers.Any(p => p.UserName == User.Identity.Name) && !goal.State)
+                                                {
+                                                    <a asp-action="AddFeedback" asp-route-goalId="@goal.Id"
+                                                       class="btn btn-sm btn-info ms-1">
+                                                        <i class="bi bi-chat-left-text"></i> Отзыв
+                                                    </a>
+                                                }
+                                                @if (User.Identity.Name == Model.Leader.UserName)
+                                                {
+                                                    <a asp-action="EditGoal" asp-route-id="@goal.Id"
+                                                       class="btn btn-sm btn-outline-primary me-2">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </a>
+                                                    <form asp-action="DeleteGoal" method="post" class="d-inline">
+                                                        <input type="hidden" name="id" value="@goal.Id" />
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                                onclick="return confirm('Удалить эту задачу?')">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-info py-2">Нет задач для отображения</div>
+                        }
+                    </div>
+                </div>
             }
             else
             {
-                <div class="alert alert-info">Нет задач для отображения</div>
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Задачи команды</h5>
+                    </div>
+                    <div class="card-body">
+                        @if (Model.Goals != null && Model.Goals.Any())
+                        {
+                            <div class="list-group">
+                                @foreach (var goal in Model.Goals.OrderByDescending(g => g.Importancy))
+                                {
+                                    <div class="list-group-item py-2">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h6 class="mb-1" style="font-size: 0.95rem;">
+                                                    @goal.Name
+                                                    <span class="badge bg-@(goal.State ? "success" : "warning") ms-2">
+                                                        @(goal.State ? "Выполнено" : "В работе")
+                                                    </span>
+                                                </h6>
+                                                <small class="text-muted" style="font-size: 0.85rem;">@goal.Desc</small>
+                                                <div class="mt-2">
+                                                    <span class="badge bg-info">Важность: @goal.Importancy</span>
+                                                    <span class="badge bg-secondary ms-2">Срок: @goal.FinishTime.ToLocalTime().ToString("g")</span>
+                                                    @foreach (var performer in goal.Performers)
+                                                    {
+                                                        <span class="badge bg-primary">@performer.FullName</span>
+                                                    }
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <a asp-action="TaskDetails" asp-route-id="@goal.Id"
+                                                   class="btn btn-sm btn-outline-primary">
+                                                    <i class="bi bi-eye"></i> Подробнее
+                                                </a>
+                                                @if (goal.Performers.Any(p => p.UserName == User.Identity.Name) && !goal.State)
+                                                {
+                                                    <a asp-action="AddFeedback" asp-route-goalId="@goal.Id"
+                                                       class="btn btn-sm btn-info ms-1">
+                                                        <i class="bi bi-chat-left-text"></i> Отзыв
+                                                    </a>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-info py-2">Нет задач для отображения</div>
+                        }
+                    </div>
+                </div>
             }
         </div>
     </div>
@@ -166,12 +275,12 @@
                 <form id="inviteForm">
                     <input type="hidden" name="squadId" value="@Model.Id" />
                     <div class="mb-3">
-                        <label class="form-label">Имя пользователя</label>
+                        <label class="form-label">Email пользователя</label>
                         <input type="text" name="invitedUserName" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Роль в команде</label>
-                        <input type="text" name="role" class="form-control" placeholder="Разработчик, Дизайнер и т.д.">
+                        <input type="text" name="Role" class="form-control" placeholder="Разработчик, Дизайнер и т.д.">
                     </div>
                 </form>
             </div>
@@ -268,5 +377,235 @@
                 }
             });
         });
+        document.querySelectorAll('form[asp-action="LeaveTeam"]').forEach(form => {
+            form.addEventListener('submit', function (e) {
+                if (!confirm('Вы уверены, что хотите покинуть команду?')) {
+                    e.preventDefault();
+                }
+            });
+        });
+
+        $(document).ready(function () {
+            $('.form-select[multiple]').select2({
+                placeholder: "Выберите исполнителей",
+                width: '100%'
+            });
+        });
+
+        $(document).ready(function () {
+            const squadId = '@Model.Id';
+            const chatContainer = $('#chatMessages');
+            const messageInput = $('#chatMessageInput');
+            const sendButton = $('#sendMessageBtn');
+
+            // Функция загрузки сообщений
+
+            // Функция удаления сообщения
+            async function deleteMessage(messageId) {
+                if (!confirm('Вы уверены, что хотите удалить это сообщение?')) return;
+
+                try {
+                    const response = await fetch('/Squads/DeleteMessage', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'RequestVerificationToken': '@GetAntiXsrfRequestToken()'
+                        },
+                        body: `messageId=${messageId}`
+                    });
+
+                    if (response.ok) {
+                        await loadMessages(); // Перезагружаем сообщения
+                    } else {
+                        const error = await response.text();
+                        console.error('Ошибка удаления:', error);
+                        alert('Не удалось удалить сообщение');
+                    }
+                } catch (error) {
+                    console.error('Ошибка:', error);
+                    alert('Произошла ошибка при удалении сообщения');
+                }
+            }
+
+            // Модифицируем функцию loadMessages для добавления кнопок удаления
+            async function loadMessages() {
+                try {
+                    const scrollTopBefore = chatContainer.scrollTop();
+                    const scrollHeightBefore = chatContainer[0].scrollHeight;
+                    const isScrolledToBottom = scrollTopBefore + chatContainer.height() >= scrollHeightBefore - 50;
+                    const response = await fetch(`/Squads/GetChatMessages?squadId=${squadId}`);
+                    const data = await response.json();
+                    const currentUser = '@User.Identity.Name';
+                    const isLeader = '@(User.Identity.Name == Model.Leader.UserName)' === 'True';
+
+                    if (data.success) {
+                        chatContainer.empty();
+
+                        data.messages.forEach(msg => {
+                            const isAuthor = msg.author === currentUser;
+                            const canDelete = isLeader || isAuthor;
+
+                            const deleteButton = canDelete
+                                ? `<button class="btn btn-sm btn-outline-danger ms-2 delete-message-btn" data-message-id="${msg.id}">
+                  <i class="bi bi-trash"></i>
+               </button>`
+                                : '';
+
+                            const messageElement = `
+                            <div class="message mb-2" data-message-id="${msg.id}">
+                                <div class="d-flex align-items-start">
+                                    ${msg.avatar ?
+                                    `<img src="${msg.avatar}" class="rounded-circle me-2" width="32" height="32" alt="${msg.author}">` :
+                                    `<div class="rounded-circle bg-secondary me-2" style="width:32px;height:32px;"></div>`
+                                }
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>${msg.author}</strong>
+                                                <small class="text-muted ms-2">${msg.date}</small>
+                                            </div>
+                                            ${deleteButton}
+                                        </div>
+                                        <div>${msg.text}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                            chatContainer.append(messageElement);
+                        });
+
+                        if (isScrolledToBottom || scrollHeightBefore === 0) {
+                            chatContainer.scrollTop(chatContainer[0].scrollHeight);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Ошибка загрузки сообщений:', error);
+                }
+            }
+
+            // Функция отправки сообщения
+            async function sendMessage() {
+                const message = messageInput.val().trim();
+                if (!message) return;
+
+                try {
+                    const response = await fetch('/Squads/SendChatMessage', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'RequestVerificationToken': '@GetAntiXsrfRequestToken()'
+                        },
+                        body: `squadId=${squadId}&message=${encodeURIComponent(message)}`
+                    });
+
+                    if (response.ok) {
+                        messageInput.val('');
+                        await loadMessages();
+                    } else {
+                        const error = await response.text();
+                        console.error('Ошибка отправки:', error);
+                        alert('Не удалось отправить сообщение');
+                    }
+                } catch (error) {
+                    console.error('Ошибка:', error);
+                    alert('Произошла ошибка при отправке сообщения');
+                }
+            }
+
+            // Обработчики событий
+            sendButton.click(sendMessage);
+            messageInput.keypress(function (e) {
+                if (e.which === 13) {
+                    sendMessage();
+                }
+            });
+
+            // Загрузка сообщений и установка интервала обновления
+            loadMessages();
+            setInterval(loadMessages, 3000);
+
+            // Обработчик для кнопок удаления (делегирование событий)
+            $(document).on('click', '.delete-message-btn', function () {
+                const messageId = $(this).data('message-id');
+                deleteMessage(messageId);
+            });
+        });
+    </script>
+    <style>
+        #chatMessages {
+            height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .message {
+            padding: 10px;
+            background-color: white;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+            .message:hover {
+                background-color: #f0f8ff;
+            }
+        .message {
+            position: relative;
+            padding: 10px;
+            background-color: white;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+        }
+
+            .message:hover {
+                background-color: #f8f9fa;
+            }
+
+        .btn-outline-danger {
+            padding: 0.15rem 0.3rem;
+            font-size: 0.75rem;
+        }
+    </style>
     </script>
 }
+<div class="modal fade" id="changeRoleModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Изменение роли участника</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="ChangeRole" method="post">
+                <div class="modal-body">
+                    <input type="hidden" name="SquadId" value="@Model.Id" />
+
+                    <div class="mb-3">
+                        <label class="form-label">Участник:</label>
+                        <select name="UserId" class="form-select" required>
+                            @foreach (var member in Model.UserSquads.Where(us => us.UserId != Model.Leader.Id))
+                            {
+                                <option value="@member.UserId">@member.User.FullName (@member.Role)</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Новая роль:</label>
+                        <input type="text" name="NewRole" class="form-control" required
+                               placeholder="Например: Разработчик, Дизайнер, Менеджер"
+                               value="@Model.UserSquads.FirstOrDefault()?.Role">
+                        <div class="form-text">Введите любую роль текстом</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

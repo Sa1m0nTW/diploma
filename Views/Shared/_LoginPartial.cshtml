@@ -1,9 +1,32 @@
 ﻿@using Microsoft.AspNetCore.Identity;
+@using WorkWise.Data
+@using Microsoft.EntityFrameworkCore
 @inject SignInManager<Users> signInManager;
+@inject UserManager<Users> UserManager;
+@inject AppDbContext DbContext;
 
 <ul class="navbar-nav ms-auto">
     @if(signInManager.IsSignedIn(User))
     {
+        <li class="nav-item">
+            <a class="nav-link" href="/invitations">
+                Приглашения
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    var user = await UserManager.GetUserAsync(User);
+                    if (user != null)
+                    {
+                        var count = await DbContext.Invitations
+                        .CountAsync(i => i.InvitedUserId == user.Id &&
+                        i.Status == InvitationStatus.Pending);
+                        @if (count > 0)
+                        {
+                            <span class="badge bg-danger">@count</span>
+                        }
+                    }
+                }
+            </a>
+        </li>
         <li class="nav-item">
             <a class="nav-link" asp-controller="Profiles" asp-action="Index">
                 <i class="bi bi-person"></i> Мой профиль

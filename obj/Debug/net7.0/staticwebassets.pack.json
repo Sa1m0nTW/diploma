@@ -17,8 +17,16 @@
       "PackagePath": "staticwebassets\\favicon.ico"
     },
     {
+      "Id": "C:\\Users\\Saimon\\source\\repos\\WorkWise\\wwwroot\\images\\9814.jpg",
+      "PackagePath": "staticwebassets\\images\\9814.jpg"
+    },
+    {
       "Id": "C:\\Users\\Saimon\\source\\repos\\WorkWise\\wwwroot\\images\\bggreen.jpg",
       "PackagePath": "staticwebassets\\images\\bggreen.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Saimon\\source\\repos\\WorkWise\\wwwroot\\images\\hpic2.jpg",
+      "PackagePath": "staticwebassets\\images\\hpic2.jpg"
     },
     {
       "Id": "C:\\Users\\Saimon\\source\\repos\\WorkWise\\wwwroot\\js\\site.js",
@@ -257,8 +265,32 @@
       "PackagePath": "staticwebassets\\uploads\\avatars\\1d314309-1a25-441e-8249-69bff7160dbc.jpg"
     },
     {
+      "Id": "C:\\Users\\Saimon\\source\\repos\\WorkWise\\wwwroot\\uploads\\avatars\\47cf7e00-59a3-46e4-b519-89620fb1cb6c.jpg",
+      "PackagePath": "staticwebassets\\uploads\\avatars\\47cf7e00-59a3-46e4-b519-89620fb1cb6c.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Saimon\\source\\repos\\WorkWise\\wwwroot\\uploads\\avatars\\8cc637ba-2056-4766-874e-21f4ca819173.jpg",
+      "PackagePath": "staticwebassets\\uploads\\avatars\\8cc637ba-2056-4766-874e-21f4ca819173.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Saimon\\source\\repos\\WorkWise\\wwwroot\\uploads\\avatars\\9175904f-e757-47aa-ba46-da627e8995d1.jpg",
+      "PackagePath": "staticwebassets\\uploads\\avatars\\9175904f-e757-47aa-ba46-da627e8995d1.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Saimon\\source\\repos\\WorkWise\\wwwroot\\uploads\\avatars\\a0ac491b-dfda-4941-b4ce-648c10d32df0.jpg",
+      "PackagePath": "staticwebassets\\uploads\\avatars\\a0ac491b-dfda-4941-b4ce-648c10d32df0.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Saimon\\source\\repos\\WorkWise\\wwwroot\\uploads\\avatars\\a3e27029-90c5-4d51-b2bb-45da7f1ba872.jpg",
+      "PackagePath": "staticwebassets\\uploads\\avatars\\a3e27029-90c5-4d51-b2bb-45da7f1ba872.jpg"
+    },
+    {
       "Id": "C:\\Users\\Saimon\\source\\repos\\WorkWise\\wwwroot\\uploads\\avatars\\be668c20-ba01-4ed0-bf20-17b5552ff189.jpg",
       "PackagePath": "staticwebassets\\uploads\\avatars\\be668c20-ba01-4ed0-bf20-17b5552ff189.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Saimon\\source\\repos\\WorkWise\\wwwroot\\uploads\\avatars\\cd3af6a6-d413-4e7a-ab93-89b717f4b453.jpg",
+      "PackagePath": "staticwebassets\\uploads\\avatars\\cd3af6a6-d413-4e7a-ab93-89b717f4b453.jpg"
     },
     {
       "Id": "C:\\Users\\Saimon\\source\\repos\\WorkWise\\wwwroot\\uploads\\avatars\\d99b9469-cb54-4026-b930-49c76ea101da.jpg",
